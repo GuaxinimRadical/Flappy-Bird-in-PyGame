@@ -70,6 +70,7 @@ def check_obstacle_passed():
     if len(pipes) > obstacle_number:
         if pipes[obstacle_number][0] + 52 <= 26:
             obstacle_number += 2
+            point_snd.play()
             return True
 
     return False
@@ -153,6 +154,7 @@ gravity = 0.25
 pg.mixer.init(44100, 16, 2, 512)
 flap_snd = pg.mixer.Sound('assets/sounds/sound_effects/Flap.ogg')
 collide_snd = pg.mixer.Sound('assets/sounds/sound_effects/Hit.ogg')
+point_snd = pg.mixer.Sound('assets/sounds/sound_effects/Point.ogg')
 
 'FONT'
 pg.font.init()
