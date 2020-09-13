@@ -1,7 +1,7 @@
 import pygame as pg
 from sys import exit
 from random import choice
-from FlaPYBird.constants import *
+from FlaPyBird.constants import *
 
 
 def animation():
@@ -46,22 +46,33 @@ def spawn_pipe():
         pipe_list.append(create_pipe())
 
 
-#---------------------------------
-def remove_pipe_out_screen(pipes):
-    global obstacle_number 
-    if(len(pipes) != 0):
-        if(pipes[0][0]+52 < 0):
+def remove_pipe(pipes):
+    global obstacle_number
+
+    if len(pipes) != 0:
+        if pipes[0][0] + 52 <= 0:
             pipes.pop(0)
             pipes.pop(0)
             obstacle_number -= 2
     
     return pipes[:]
-#---------------------------------
 
 
 def move_floor():
     display.blit(floor, (floor_pos_x, DISPLAY_HEIGHT - floor_rect.height // 2))
     display.blit(floor, (floor_pos_x + DISPLAY_WIDTH, DISPLAY_HEIGHT - floor_rect.height // 2))
+
+
+def check_obstacle_passed():
+    global obstacle_number
+    pipes = pipe_list[:]
+
+    if len(pipes) > obstacle_number:
+        if pipes[obstacle_number][0] + 52 <= 26:
+            obstacle_number += 2
+            return True
+
+    return False
 
 
 def check_collision(pipes):
@@ -77,32 +88,26 @@ def check_collision(pipes):
     return True
 
 
-#---------------------------------------------
-def check_obstacle_passed():
-    global obstacle_number 
-    pipes = pipe_list[:]
-    if(len(pipes) > obstacle_number):
-        if(pipes[obstacle_number][0]+52 < 50):
-            obstacle_number += 2
-            return True
-
-    return False
-#---------------------------------------------
-
-
 def score_display(game_state):
     if game_state == 'main_game':
         score_font = font.render(str(int(score)), True, white)
         score_font_rect = score_font.get_rect(center=(DISPLAY_WIDTH // 2, 50))
         display.blit(score_font, score_font_rect)
     elif game_state == 'game_over':
-        score_font = font.render(f'Time: {int(score)}', True, white)
+        score_font = font.render(f'Score: {int(score)}', True, white)
         score_font_rect = score_font.get_rect(center=(DISPLAY_WIDTH // 2, 50))
         display.blit(score_font, score_font_rect)
 
-        hight_score_font = font.render(f'High Time: {int(high_score)}', True, white)
+        hight_score_font = font.render(f'High Score: {int(high_score)}', True, white)
         hight_score_font_rect = hight_score_font.get_rect(center=(DISPLAY_WIDTH // 2, 412))
         display.blit(hight_score_font, hight_score_font_rect)
+
+
+def increment_score(scr, increment):
+    if check_obstacle_passed():
+        return scr + increment
+
+    return scr
 
 
 def score_update(scr, high_scr):
@@ -110,15 +115,6 @@ def score_update(scr, high_scr):
         high_scr = scr
 
     return high_scr
-
-
-#-----------------------------------
-def increment_score(scr, increment):
-    if(check_obstacle_passed()):
-        return scr+increment
-
-    return scr
-#-----------------------------------
 
 
 'DISPLAY'
@@ -133,9 +129,8 @@ floor_pos_x = 0
 pipe = pg.image.load('assets/images/sprites/Pipe.png')
 pipe_list = []
 pipe_spawn = pg.USEREVENT
-#-------------------
 obstacle_number = 0
-#-------------------
+
 pg.time.set_timer(pipe_spawn, 1200)
 pipe_hei = [200, 300, 400]
 bg_game_over = pg.image.load('assets/images/sprites/Game_Over.png')
@@ -193,9 +188,7 @@ while True:
                 bird_move = 0
                 bird_rect.center = (50, DISPLAY_HEIGHT // 2)
                 score = 0
-                #-------------------
                 obstacle_number = 0
-                #-------------------
 
         if event.type == bird_flap:
             if bird_index < 2:
@@ -222,23 +215,16 @@ while True:
         # PIPE
         draw_pipe(pipe_list)
         pipe_list = move_pipe(pipe_list)
-        # -------------------------------------------
-        pipe_list = remove_pipe_out_screen(pipe_list)
-        # -------------------------------------------
+        pipe_list = remove_pipe(pipe_list)
 
         # SCORE
-        # -------------------------------
-        score = increment_score(score, 1)
-        # -------------------------------
         score_display('main_game')
-        # if score_spd <= 60:
-        #     score_spd += 1
-        # else:
-        #     score += 1
-        #     score_spd = 0
+        score = increment_score(score, 1)
 
     else:
         display.blit(bg_game_over, bg_game_over_rect)
+
+        # PIPE
 
         # SCORE
         high_score = score_update(score, high_score)
@@ -249,5 +235,6 @@ while True:
     if floor_pos_x <= -DISPLAY_WIDTH:
         floor_pos_x = 0
     floor_pos_x -= 1
+    print(pipe_list)
 
     pg.display.update()
