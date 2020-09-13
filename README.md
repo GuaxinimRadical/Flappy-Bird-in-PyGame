@@ -1,4 +1,4 @@
-# Flappy Bird in Pygame
+# Flappy Bird in PyGame
 # To avoid a local error, create a folder called "FlaPyBird" and place the files inside
 
 Credits and thanks for:
