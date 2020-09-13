@@ -19,8 +19,8 @@ def rotate(img):
 
 def create_pipe():
     random_pipe = choice(pipe_hei)
-    top_pipe = pipe.get_rect(midbottom=(DISPLAY_WIDTH, random_pipe - 150))
-    bottom_pipe = pipe.get_rect(midtop=(DISPLAY_WIDTH, random_pipe))
+    top_pipe = pipe.get_rect(midbottom=(DISPLAY_WIDTH + 26, random_pipe - 150))
+    bottom_pipe = pipe.get_rect(midtop=(DISPLAY_WIDTH + 26, random_pipe))
 
     return top_pipe, bottom_pipe
 
@@ -161,7 +161,6 @@ font = pg.font.Font('assets/font/04B_19.ttf', 20)
 'SCORE'
 high_score = 0
 score = high_score
-score_spd = 0
 
 'FPS'
 clock = pg.time.Clock()
@@ -225,7 +224,9 @@ while True:
         display.blit(bg_game_over, bg_game_over_rect)
 
         # PIPE
-
+        pipe_list = move_pipe(pipe_list)
+        pipe_list = remove_pipe(pipe_list)
+        
         # SCORE
         high_score = score_update(score, high_score)
         score_display('game_over')
