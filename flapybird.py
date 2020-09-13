@@ -236,6 +236,5 @@ while True:
     if floor_pos_x <= -DISPLAY_WIDTH:
         floor_pos_x = 0
     floor_pos_x -= 1
-    print(pipe_list)
 
     pg.display.update()
