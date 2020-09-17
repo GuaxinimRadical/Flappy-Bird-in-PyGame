@@ -1,7 +1,7 @@
 import pygame as pg
 from sys import exit
 from random import choice
-from FlaPyBird.constants import *
+from constants import *
 
 
 def animation():
